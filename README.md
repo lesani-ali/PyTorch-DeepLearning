@@ -67,4 +67,4 @@ Please follow these steps to set up the working environment:
 
 ## Acknowledgements
 - The MNIST dataset is provided by Yann LeCun and can be found [here](http://yann.lecun.com/exdb/mnist/).
-- The VGG11 architecture can be found [here](chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://arxiv.org/pdf/1409.1556).
+- The VGG11 architecture can be found [here](https://arxiv.org/pdf/1409.1556.pdf).
