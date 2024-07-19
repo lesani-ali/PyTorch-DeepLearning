@@ -41,10 +41,10 @@ def calculate_accuracy(model, loader, device):
     total = 0
     model.eval()
     with torch.no_grad():
-        for images, labels in loader:
+        for inputs, labels in loader:
             # Send input to device
-            images, labels = images.to(device), labels.to(device)
-            predicted = model.predict(images)
+            inputs, labels = inputs.to(device), labels.to(device)
+            predicted = model.predict(inputs)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     return (100 * correct / total)
@@ -89,13 +89,13 @@ def train(num_epochs, data_loader, model, optimizer, criterion, device, verbose=
     for epoch in range(num_epochs):
         running_loss = 0.0
         model.train()  # Set model to training mode
-        for (images, labels) in tqdm(train_loader, desc=f'Epoch {epoch + 1}/{num_epochs}', leave=False):
+        for (inputs, labels) in tqdm(train_loader, desc=f'Epoch {epoch + 1}/{num_epochs}', leave=False):
 
             # Send input to device
-            images, labels = images.to(device), labels.to(device)
+            inputs, labels = inputs.to(device), labels.to(device)
 
             # Forward pass
-            outputs = model(images)
+            outputs = model(inputs)
             loss = criterion(outputs, labels)
 
             # Backward and optimize
@@ -103,25 +103,25 @@ def train(num_epochs, data_loader, model, optimizer, criterion, device, verbose=
             loss.backward()
             optimizer.step()
 
-            running_loss += loss.item()
-        train_loss = running_loss / len(train_loader)
+            running_loss += loss.item() * inputs.size(0)
+        train_loss = running_loss / len(train_loader.dataset)
         train_losses.append(train_loss)
 
         # Evaluate on validation data
         model.eval()  # Set model to evaluation mode
         running_loss = 0.0
         with torch.no_grad():
-            for (images, labels) in val_loader:
+            for (inputs, labels) in val_loader:
                 # Send input to device
-                images, labels = images.to(device), labels.to(device)
+                inputs, labels = inputs.to(device), labels.to(device)
 
                 # Forward pass
-                outputs = model(images)
+                outputs = model(inputs)
                 loss = criterion(outputs, labels)
 
-                running_loss += loss.item()
+                running_loss += loss.item() * inputs.size(0)
 
-        val_loss = running_loss / len(val_loader)
+        val_loss = running_loss / len(val_loader.dataset)
         val_losses.append(val_loss)
 
         # Calculate training and validation accuracy
